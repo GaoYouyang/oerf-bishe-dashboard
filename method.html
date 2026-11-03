@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN" data-lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>问题与方法 | 3D BOST Warm Starts</title>
+  <link rel="stylesheet" href="site/style.css">
+  <script src="site/site.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">3D BOST Warm Starts<small>Gao Youyang · FYP</small></a>
+    <nav class="nav">
+      <a href="index.html"><span lang="zh">首页</span><span lang="en">Overview</span></a>
+      <a href="method.html"><span lang="zh">问题与方法</span><span lang="en">Problem &amp; Method</span></a>
+      <a href="results.html"><span lang="zh">结果</span><span lang="en">Results</span></a>
+      <a href="log.html"><span lang="zh">进展日志</span><span lang="en">Progress Log</span></a>
+      <a href="archive.html"><span lang="zh">资料归档</span><span lang="en">Archive</span></a>
+    </nav>
+    <button class="lang-btn" type="button">中 / EN</button>
+  </div>
+</header>
+
+<main class="wrap narrow">
+  <h1><span lang="zh">问题与方法</span><span lang="en">Problem &amp; Method</span></h1>
+
+  <h2><span lang="zh">1. BOS 测的是什么</span><span lang="en">1. What BOS measures</span></h2>
+  <p><span lang="zh">背景纹影（BOS）在流场后放一张带图案的背景，用相机拍摄。气体密度变化会改变折射率，使光线偏折，背景图案在照片上产生微小位移。对气体，折射率和密度满足 Gladstone–Dale 关系 <span class="math">n − 1 = Kρ</span>；在小偏折近似下，每个像素测到的位移正比于折射率梯度沿视线的积分。</span>
+  <span lang="en">Background-oriented schlieren (BOS) photographs a patterned background through the flow. Density changes alter the refractive index, bend the light, and shift the background pattern slightly in the image. For a gas, refractive index and density follow the Gladstone–Dale relation <span class="math">n − 1 = Kρ</span>; for small deflections, each pixel's displacement is proportional to the line integral of the refractive-index gradient along its line of sight.</span></p>
+  <p><span lang="zh">多台相机从不同方向拍摄同一个流场，就能重建三维密度场，这就是 BOS 层析（BOST）。离散化以后，问题写成一个线性方程：</span><span lang="en">With several cameras viewing the same flow from different directions, the 3D density can be reconstructed. This is BOS tomography (BOST). After discretisation the problem is linear:</span></p>
+  <div class="eq">y = A ρ + noise</div>
+  <p><span lang="zh">其中 ρ 是网格上的密度（约 128 万个未知数），y 是所有相机测得的位移（目前约 1 万个测量），A 是由相机几何决定的投影算子。</span><span lang="en">Here ρ is the density on the grid (about 1.28 million unknowns), y holds all measured displacements (about 10⁴ at present), and A is the projection operator set by the camera geometry.</span></p>
+
+  <h2><span lang="zh">2. 为什么难</span><span lang="en">2. Why it is hard</span></h2>
+  <p><span lang="zh">测量远少于未知数，而且相机只从少数几个方向看。很多完全不同的密度场都能同样好地解释测量数据，这些差别落在相机“看不见”的方向上。所以重建必须引入先验信息：要么显式加入正则或统计先验，要么隐式地依赖迭代求解器的起点和迭代步数。</span>
+  <span lang="en">There are far fewer measurements than unknowns, and the cameras only look from a few directions. Many very different fields explain the data equally well; their differences lie in directions the cameras cannot see. Reconstruction therefore needs prior information, either explicitly (regularisation or a statistical prior) or implicitly (the starting point and number of iterations of an iterative solver).</span></p>
+  <div class="note warm"><span lang="zh">学习方法的风险正在这里：它可能给出一个“看起来合理”、在不可见方向上却是错的初值。因此本项目始终用精确的物理算子做最后的精修，并在严格的公平对照下评估。</span><span lang="en">This is exactly where learned methods are risky: they can produce a guess that looks plausible but is wrong in the invisible directions. The project therefore always finishes with the exact physical operator and evaluates under strict, fair comparisons.</span></div>
+
+  <h2><span lang="zh">3. 方法流程</span><span lang="en">3. Pipeline</span></h2>
+  <ol>
+    <li><span lang="zh"><strong>学习型初值</strong>：网络只使用测得的位移和已知的相机几何，不看真值；对相机的排列顺序不敏感，可处理不同的相机数量。</span><span lang="en"><strong>Learned initial guess</strong>: the network uses only the measured displacements and the known camera geometry, never the truth; it is insensitive to camera ordering and handles different camera counts.</span></li>
+    <li><span lang="zh"><strong>精确提升</strong>：把初值通过精确的伴随算子 Aᵀ 映射回三维场，保证它和测量物理一致。</span><span lang="en"><strong>Exact lift</strong>: map the guess back to the 3D field through the exact adjoint Aᵀ so that it is consistent with the measurement physics.</span></li>
+    <li><span lang="zh"><strong>不改动的求解器</strong>：用标准 CGLS/PCGLS 继续迭代。学习只改变起点，不改变求解器。</span><span lang="en"><strong>Unchanged solver</strong>: continue with standard CGLS/PCGLS. Learning changes only the starting point, never the solver.</span></li>
+  </ol>
+
+  <h2><span lang="zh">4. 和什么比</span><span lang="en">4. What we compare against</span></h2>
+  <div class="table-wrap"><table>
+    <tr><th><span lang="zh">方法</span><span lang="en">Method</span></th><th><span lang="zh">说明</span><span lang="en">Description</span></th></tr>
+    <tr><td>Zero / Mean / BP</td><td><span lang="zh">零场、训练均值、反投影，最简单的参照。</span><span lang="en">Zero field, training mean, back-projection; the simplest references.</span></td></tr>
+    <tr><td>CGLS / PCGLS</td><td><span lang="zh">从零开始迭代固定步数，含对角预条件版本。</span><span lang="en">Fixed-step iterations from zero, including a diagonally preconditioned version.</span></td></tr>
+    <tr><td><span lang="zh">Gaussian 条件均值</span><span lang="en">Gaussian posterior mean</span></td><td><span lang="zh">用训练场估计均值和协方差，求最小均方误差意义下的线性最优估计：<span class="math">ρ̂ = μ + C Aᵀ (A C Aᵀ + λI)⁻¹ (y − Aμ)</span>。可以先分解矩阵再逐帧求解，也可以用共轭梯度迭代求解。</span><span lang="en">Mean and covariance estimated from training fields only; the linear minimum-mean-square-error estimate <span class="math">ρ̂ = μ + C Aᵀ (A C Aᵀ + λI)⁻¹ (y − Aμ)</span>, computed either by factorising the matrix once or iteratively with conjugate gradients.</span></td></tr>
+    <tr><td>Gaussian + CGLS3</td><td><span lang="zh">从 Gaussian 结果出发再做三步 CGLS。</span><span lang="en">Three CGLS steps started from the Gaussian estimate.</span></td></tr>
+  </table></div>
+
+  <h2><span lang="zh">5. 怎样才算“好”</span><span lang="en">5. What counts as “good”</span></h2>
+  <p><span lang="zh">每一帧计算四项相对误差：密度场、完整梯度、内部梯度、观测残差。每条轨迹的 90 分位数和最差帧都必须低于固定上限。只有在四项精度都与最强对照相当（不超过其 1.01 倍）的前提下，比较计算量才有意义。</span><span lang="en">For every frame four relative errors are computed: density field, full gradient, interior gradient and observation residual. For each trajectory the 90th percentile and the worst frame must stay below fixed limits. Cost is compared only when all four errors match the strongest baseline (within 1.01×).</span></p>
+  <p><span lang="zh">计算量按实际调用 A、Aᵀ 和协方差算子的次数统计，包括所有准备工作；同时在新进程中实测耗时和峰值内存。判定规则在看到结果之前写定，失败的实验保留记录，不事后调参挽救。</span><span lang="en">Cost counts every call to A, Aᵀ and the covariance operator, including all set-up work, and wall time and peak memory are measured in fresh processes. Decision rules are written before results are seen; failed runs are kept and not rescued by after-the-fact tuning.</span></p>
+
+  <h2><span lang="zh">6. 数据</span><span lang="en">6. Data</span></h2>
+  <ul>
+    <li><span lang="zh">公开的 PoolFire 池火 CFD 三维密度场：9 条完整训练轨迹，每条 101 帧，网格 200×80×80；其余轨迹封存，留作独立检验。</span><span lang="en">Public PoolFire CFD density fields: 9 complete training trajectories of 101 frames on a 200×80×80 grid; the remaining trajectories are kept sealed for independent tests.</span></li>
+    <li><span lang="zh">相机几何来自蔡老师课题组提供的真实九相机标定，可选 5/7/9 台相机。</span><span lang="en">Camera geometry comes from real nine-camera calibrations provided by Prof. Cai's group (5/7/9 cameras).</span></li>
+    <li><span lang="zh">计划使用宾州州立大学公开的真实 BOS 层析数据（Molnar 等，2025），检验真实测量规模下的计算成本。</span><span lang="en">Planned: the public real BOS tomography dataset from Penn State (Molnar et al., 2025), to test cost at real measurement scale.</span></li>
+  </ul>
+  <p class="meta"><span lang="zh">局限：目前的位移由合成数据生成，采用直线小偏折模型，尚未在自有实验数据上验证。</span><span lang="en">Limitation: displacements are currently synthetic with a straight-ray small-deflection model; not yet validated on our own experimental data.</span></p>
+</main>
+
+<footer class="site-footer"><div class="wrap"><span lang="zh">Gao Youyang · 厦门大学马来西亚分校物理系</span><span lang="en">Gao Youyang · XMUM Physics</span></div></footer>
+</body>
+</html>

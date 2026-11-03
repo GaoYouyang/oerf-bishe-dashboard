@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN" data-lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>结果 | 3D BOST Warm Starts</title>
+  <link rel="stylesheet" href="site/style.css">
+  <script src="site/site.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">3D BOST Warm Starts<small>Gao Youyang · FYP</small></a>
+    <nav class="nav">
+      <a href="index.html"><span lang="zh">首页</span><span lang="en">Overview</span></a>
+      <a href="method.html"><span lang="zh">问题与方法</span><span lang="en">Problem &amp; Method</span></a>
+      <a href="results.html"><span lang="zh">结果</span><span lang="en">Results</span></a>
+      <a href="log.html"><span lang="zh">进展日志</span><span lang="en">Progress Log</span></a>
+      <a href="archive.html"><span lang="zh">资料归档</span><span lang="en">Archive</span></a>
+    </nav>
+    <button class="lang-btn" type="button">中 / EN</button>
+  </div>
+</header>
+
+<main class="wrap narrow">
+  <h1><span lang="zh">结果</span><span lang="en">Results</span></h1>
+  <p class="lead"><span lang="zh">这里只列已经独立核实的结果。每条都写明适用范围和局限；正面和负面结果一样重要。</span><span lang="en">Only independently verified results are listed. Each states its scope and limits; negative results matter as much as positive ones.</span></p>
+
+  <!-- To add a result, copy one <section class="result"> block. Tags: pos / mixed / neg / plan. -->
+  <section class="result">
+    <span class="tag pos"><span lang="zh">已核实</span><span lang="en">verified</span></span>
+    <h3><span lang="zh">1. 可信的物理仿真与评测平台</span><span lang="en">1. A trustworthy simulation and evaluation platform</span></h3>
+    <p><span lang="zh">实现了多相机 BOS 前向模型、精确伴随、CGLS/PCGLS、Gaussian 条件均值、四项误差指标和算子调用计数。关键算子由两套独立代码交叉检验，结果一致到约 1e-12。</span><span lang="en">Built the multi-camera BOS forward model, exact adjoint, CGLS/PCGLS, Gaussian posterior mean, four error metrics and operator-call accounting. Key operators are cross-checked by two independent codes, agreeing to about 1e-12.</span></p>
+    <dl><dt><span lang="zh">范围</span><span lang="en">Scope</span></dt><dd><span lang="zh">原生 200×80×80 网格，5/7/9 相机，909 帧。</span><span lang="en">Native 200×80×80 grid, 5/7/9 cameras, 909 frames.</span></dd>
+    <dt><span lang="zh">意义</span><span lang="en">Why it matters</span></dt><dd><span lang="zh">后面所有结论都建立在这套可复算的基础上。</span><span lang="en">Every later conclusion rests on this reproducible base.</span></dd></dl>
+  </section>
+
+  <section class="result">
+    <span class="tag pos"><span lang="zh">已核实</span><span lang="en">verified</span></span>
+    <h3><span lang="zh">2. Gaussian 统计对照是很强的基线</span><span lang="en">2. The Gaussian baseline is very strong</span></h3>
+    <p><span lang="zh">只用训练场估计协方差的 Gaussian 条件均值，在 9/9 条训练轨迹上满足全部精度上限；而从零开始的 CGLS/PCGLS（4–7 步）和反投影一条都不满足。在严格的跨轨迹留出检验中，它通过 7/9 条。</span><span lang="en">The Gaussian posterior mean, with covariance estimated from training fields only, meets every limit on 9/9 training trajectories, while zero-start CGLS/PCGLS (4–7 steps) and back-projection meet none. Under strict held-out-trajectory tests it passes 7/9.</span></p>
+    <dl><dt><span lang="zh">局限</span><span lang="en">Limits</span></dt><dd><span lang="zh">两条留出轨迹的梯度误差仍超限，说明训练分布之外它并非万能。</span><span lang="en">Two held-out trajectories still exceed the gradient limit, so it is not sufficient outside the training distribution.</span></dd></dl>
+  </section>
+
+  <section class="result">
+    <span class="tag mixed"><span lang="zh">有收益，有代价</span><span lang="en">gain with trade-offs</span></span>
+    <h3><span lang="zh">3. 粗网格上，学习先验带来真实收益</span><span lang="en">3. On a coarse grid, a learned prior gives real gains</span></h3>
+    <p><span lang="zh">在 41×17×17 网格上，学习得到的条件先验在 1010 个留出帧上全部达到参考精度，场与梯度联合误差比强统计对照低 9.25%。同一个五相机模型不重新训练就能用于 7/9/12 相机、去掉一台相机和 1% 噪声的情况。不经 CGLS 的完整首次运行比统计对照快约 17–18%。</span><span lang="en">On a 41×17×17 grid, a learned conditional prior matched the reference on all 1,010 held-out frames and lowered the joint field/gradient error by 9.25% against the strong statistical baseline. The same five-camera model, without retraining, worked with 7/9/12 cameras, with one camera removed, and with 1% noise. A full first run without CGLS was about 17–18% faster than the statistical baseline.</span></p>
+    <dl><dt><span lang="zh">局限</span><span lang="en">Limits</span></dt><dd><span lang="zh">两条轨迹的观测误差高出约 7%，超出容差；峰值内存高 3–5%；统计对照本身更准。这些收益没有在原生网格上复现。</span><span lang="en">Observation error was ~7% too high on two trajectories; peak memory was 3–5% higher; the statistical baseline itself was more accurate. These gains did not carry over to the native grid.</span></dd></dl>
+  </section>
+
+  <section class="result">
+    <span class="tag neg"><span lang="zh">负面结果</span><span lang="en">negative</span></span>
+    <h3><span lang="zh">4. 原生网格上，学习先验没能超过 Gaussian</span><span lang="en">4. On the native grid, learned priors did not beat the Gaussian</span></h3>
+    <p><span lang="zh">在 200×80×80 网格上试了几十种初值设计（谱方法、协方差压缩、射线图、条件神经网络、时序传输等），在训练轨迹上都达不到 Gaussian 的精度。以 Gaussian 为底再学一个修正，虽然 909 帧全部匹配，但联合误差只降低约 0.01%。</span><span lang="en">Dozens of initial-guess designs on the 200×80×80 grid (spectral, compressed covariance, ray graphs, conditional networks, temporal transport, …) failed to reach Gaussian accuracy even on the training trajectories. A learned correction on top of the Gaussian matched all 909 frames but lowered the joint error by only ~0.01%.</span></p>
+    <dl><dt><span lang="zh">结论</span><span lang="en">Lesson</span></dt><dd><span lang="zh">在当前测量规模下，Gaussian 已接近可达精度。这些是训练集上的失败，不能归咎于泛化或算力。</span><span lang="en">At the current measurement count the Gaussian is close to the achievable accuracy. These are failures on the training data, so they cannot be blamed on generalisation or compute.</span></dd></dl>
+  </section>
+
+  <section class="result">
+    <span class="tag plan"><span lang="zh">初步，进行中</span><span lang="en">preliminary</span></span>
+    <h3><span lang="zh">5. 计算成本：学习型初值真正的用武之地</span><span lang="en">5. Cost: where a learned start can actually help</span></h3>
+    <p><span lang="zh">在固定相机下，Gaussian 只需预先分解一个约 1 万 × 1 万的矩阵，之后每帧只要一次回代，几乎不花成本，学习方法无从节省。不能存储这个矩阵时，只能迭代求解：在一帧测试中，共轭梯度迭代约 384 步、再接三步 CGLS，才与精确 Gaussian 达到同等精度。真实 BOS 相机每台约百万像素，测量数在 10⁷ 量级，稠密矩阵需要约 800 TB 内存，只能迭代。</span><span lang="en">With fixed cameras the Gaussian only needs one factorisation of a ~10⁴ × 10⁴ matrix, then one back-substitution per frame, so there is nothing for a learned method to save. When the matrix cannot be stored, the solve must be iterative: on one test frame, about 384 conjugate-gradient steps plus three CGLS steps were needed to match the exact Gaussian. Real BOS cameras have ~10⁶ pixels each, giving ~10⁷ measurements; the dense matrix would need about 800 TB, so iteration is the only option.</span></p>
+    <dl><dt><span lang="zh">下一步</span><span lang="en">Next</span></dt><dd><span lang="zh">测量所需步数随测量数的变化，与经典加速方法比较，再在这个区间训练学习型初值。</span><span lang="en">Measure how the required steps grow with the number of measurements, compare with classical accelerations, then train the learned start in this regime.</span></dd></dl>
+  </section>
+
+  <h2><span lang="zh">到目前为止学到的</span><span lang="en">What we have learned</span></h2>
+  <ul>
+    <li><span lang="zh">算子调用少，不等于更快：一个经典初值少用了 72.7% 的调用，耗时却和对照几乎相同，内存还大得多。</span><span lang="en">Fewer operator calls do not mean faster: one classical start used 72.7% fewer calls but took the same time and far more memory.</span></li>
+    <li><span lang="zh">训练损失下降，不等于重建更好：有几个小模型训练损失降了 13–27%，重建却没有改善。</span><span lang="en">Lower training loss does not mean better reconstructions: several small models cut their training loss by 13–27% with no gain in the final result.</span></li>
+    <li><span lang="zh">先问“价值在哪个区间”，再设计方法：与其在强基线最强的地方硬拼，不如找到它代价最高的地方。</span><span lang="en">Ask where the value lies before designing a method: compete where the strong baseline is expensive, not where it is strongest.</span></li>
+  </ul>
+</main>
+
+<footer class="site-footer"><div class="wrap"><span lang="zh">完整的逐项实验记录见 <a href="archive.html">资料归档</a>。</span><span lang="en">Full per-experiment records are in the <a href="archive.html">archive</a>.</span></div></footer>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN" data-lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>进展日志 | 3D BOST Warm Starts</title>
+  <link rel="stylesheet" href="site/style.css">
+  <script src="site/site.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">3D BOST Warm Starts<small>Gao Youyang · FYP</small></a>
+    <nav class="nav">
+      <a href="index.html"><span lang="zh">首页</span><span lang="en">Overview</span></a>
+      <a href="method.html"><span lang="zh">问题与方法</span><span lang="en">Problem &amp; Method</span></a>
+      <a href="results.html"><span lang="zh">结果</span><span lang="en">Results</span></a>
+      <a href="log.html"><span lang="zh">进展日志</span><span lang="en">Progress Log</span></a>
+      <a href="archive.html"><span lang="zh">资料归档</span><span lang="en">Archive</span></a>
+    </nav>
+    <button class="lang-btn" type="button">中 / EN</button>
+  </div>
+</header>
+
+<main class="wrap narrow">
+  <h1><span lang="zh">进展日志</span><span lang="en">Progress Log</span></h1>
+  <p class="lead"><span lang="zh">按时间倒序记录阶段性进展。逐项实验的详细记录保留在归档中。</span><span lang="en">Milestones in reverse chronological order. Detailed per-experiment records are kept in the archive.</span></p>
+
+  <!-- New entry: copy the <article class="entry"> block below, put it first, edit date/title/bullets. -->
+  <article class="entry">
+    <time datetime="2026-11-03">2026-11-03</time>
+    <h3><span lang="zh">方向转折：学习型初值的价值在大规模测量</span><span lang="en">Turning point: a learned start pays off at large measurement counts</span></h3>
+    <ul>
+      <li><span lang="zh">核对成本账：固定相机时，Gaussian 对照只需一次矩阵分解，之后每帧几乎不花成本。</span><span lang="en">Cost audit: with fixed cameras the Gaussian baseline needs one matrix factorisation, after which each frame is almost free.</span></li>
+      <li><span lang="zh">迭代求解在一帧上要约 384 步才能与精确 Gaussian 同等精度；真实相机的测量规模下只能迭代。</span><span lang="en">The iterative solve needed about 384 steps on one frame to match the exact Gaussian; at real camera scale iteration is the only option.</span></li>
+      <li><span lang="zh">下一步：测量所需步数随测量数的变化，并找到一套公开的真实 BOS 层析数据用于验证。</span><span lang="en">Next: measure how the required steps scale with the number of measurements, and use a public real BOS tomography dataset for validation.</span></li>
+    </ul>
+  </article>
+
+  <article class="entry">
+    <time datetime="2026-10-29">2026-10-29</time>
+    <h3><span lang="zh">原生网格的强对照定型</span><span lang="en">Strong baseline settled on the native grid</span></h3>
+    <ul>
+      <li><span lang="zh">改进后的 Gaussian 对照在 9/9 条训练轨迹上满足全部精度上限。</span><span lang="en">The improved Gaussian baseline meets every limit on 9/9 training trajectories.</span></li>
+      <li><span lang="zh">利用水平旋转与镜像对称的先验，把最难轨迹的梯度误差从 0.855 降到 0.815，但留出检验仍是 7/9。</span><span lang="en">A rotation/mirror symmetry prior reduced the hardest trajectory's gradient error from 0.855 to 0.815, but held-out tests still pass 7/9.</span></li>
+    </ul>
+  </article>
+
+  <article class="entry">
+    <time datetime="2026-10-24">2026-10 · <span lang="zh">第 4–5 周</span><span lang="en">weeks 4–5</span></time>
+    <h3><span lang="zh">原生网格上的大量尝试没有超过 Gaussian</span><span lang="en">Many native-grid designs did not beat the Gaussian</span></h3>
+    <ul>
+      <li><span lang="zh">几十种初值设计在训练轨迹上就达不到 Gaussian 精度；以 Gaussian 为底的学习修正只改进约 0.01%。</span><span lang="en">Dozens of designs fell short of the Gaussian even on training trajectories; a learned correction on top of it improved by only ~0.01%.</span></li>
+      <li><span lang="zh">结论：问题不在泛化或算力，而在当前规模下 Gaussian 已接近可达精度。</span><span lang="en">Lesson: the issue is not generalisation or compute; at this scale the Gaussian is near the achievable accuracy.</span></li>
+    </ul>
+  </article>
+
+  <article class="entry">
+    <time datetime="2026-10-14">2026-10 · <span lang="zh">第 2–3 周</span><span lang="en">weeks 2–3</span></time>
+    <h3><span lang="zh">粗网格上的学习先验：有收益，也有代价</span><span lang="en">Coarse-grid learned prior: gains with trade-offs</span></h3>
+    <ul>
+      <li><span lang="zh">1010 个留出帧全部达到参考精度，场与梯度误差降低 9.25%；两条轨迹的观测误差超限。</span><span lang="en">All 1,010 held-out frames matched the reference with 9.25% lower field/gradient error; two trajectories exceeded the observation limit.</span></li>
+      <li><span lang="zh">不重训迁移到 7/9/12 相机、少一台相机和 1% 噪声；首次完整运行快约 17–18%，但内存略高。</span><span lang="en">Transferred without retraining to 7/9/12 cameras, a removed camera and 1% noise; a full first run was ~17–18% faster but used slightly more memory.</span></li>
+      <li><span lang="zh">10 月 5 日确定 Dr Kelvin Ooi 为校内导师，与上海交大蔡老师课题组继续合作。</span><span lang="en">5 Oct: Dr Kelvin Ooi confirmed as internal supervisor; collaboration with Prof. Cai's group at SJTU continues.</span></li>
+    </ul>
+  </article>
+
+  <article class="entry">
+    <time datetime="2026-09-30">2026-09</time>
+    <h3><span lang="zh">文献边界与物理接口核对</span><span lang="en">Literature boundary and physics interface checks</span></h3>
+    <ul>
+      <li><span lang="zh">梳理神经算子初值（NOWS）、学习型预条件、神经场 BOS（NeDF、NeRIP）等近邻工作，明确本项目可主张的范围。</span><span lang="en">Reviewed neural-operator warm starts (NOWS), learned preconditioners and neural-field BOS (NeDF, NeRIP) to fix what this project can claim.</span></li>
+      <li><span lang="zh">用解析算例检查课题组 BOS 模拟器的输出含义，确认其不直接等于图像位移。</span><span lang="en">Checked the group's BOS simulator against an analytic case and found its output is not directly an image displacement.</span></li>
+    </ul>
+  </article>
+
+  <article class="entry">
+    <time datetime="2026-08-31">2026-07 – 08</time>
+    <h3><span lang="zh">搭建仿真与评测平台</span><span lang="en">Simulation and evaluation platform built</span></h3>
+    <ul>
+      <li><span lang="zh">在蔡老师课题组实习期间选题，搭建 CFD 密度场、多相机 BOS 前向、精确伴随、CGLS/PCGLS 和评测指标。</span><span lang="en">Chose the topic during the internship in Prof. Cai's group; built CFD density fields, the multi-camera BOS forward model, exact adjoint, CGLS/PCGLS and the metrics.</span></li>
+      <li><span lang="zh">早期结果：最佳学习初值在 505 个测试帧上都达到精度上限，但只在 453 帧上比所有基线更省。</span><span lang="en">Early result: the best learned start met the accuracy limits on all 505 test frames but was cheaper than every baseline on only 453.</span></li>
+    </ul>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap"><span lang="zh">旧版详细日志见 <a href="operator-learning/daily-progress.html">这里</a>。</span><span lang="en">The old detailed log is <a href="operator-learning/daily-progress.html">here</a>.</span></div></footer>
+</body>
+</html>
