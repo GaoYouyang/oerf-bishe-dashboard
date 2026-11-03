@@ -52,15 +52,50 @@
   <section class="result">
     <span class="tag neg"><span lang="zh">负面结果</span><span lang="en">negative</span></span>
     <h3><span lang="zh">4. 原生网格上，学习先验没能超过 Gaussian</span><span lang="en">4. On the native grid, learned priors did not beat the Gaussian</span></h3>
-    <p><span lang="zh">在 200×80×80 网格上试了几十种初值设计（谱方法、协方差压缩、射线图、条件神经网络、时序传输等），在训练轨迹上都达不到 Gaussian 的精度。以 Gaussian 为底再学一个修正，虽然 909 帧全部匹配，但联合误差只降低约 0.01%。</span><span lang="en">Dozens of initial-guess designs on the 200×80×80 grid (spectral, compressed covariance, ray graphs, conditional networks, temporal transport, …) failed to reach Gaussian accuracy even on the training trajectories. A learned correction on top of the Gaussian matched all 909 frames but lowered the joint error by only ~0.01%.</span></p>
+    <p><span lang="zh">在 200×80×80 网格上试了几十种初值设计（谱方法、协方差压缩、射线图、条件神经网络、时序传输等），在训练轨迹上都达不到 Gaussian 的精度。利用前一帧的时序模型训练不稳定，最终误差约为 Gaussian 的 4.9 倍。以 Gaussian 为底再学一个修正，虽然 909 帧全部匹配，但联合误差只降低约 0.01%。</span><span lang="en">Dozens of initial-guess designs on the 200×80×80 grid (spectral, compressed covariance, ray graphs, conditional networks, temporal transport, …) failed to reach Gaussian accuracy even on the training trajectories. A temporal model reusing the previous frame trained unstably and ended at about 4.9× the Gaussian error. A learned correction on top of the Gaussian matched all 909 frames but lowered the joint error by only ~0.01%.</span></p>
     <dl><dt><span lang="zh">结论</span><span lang="en">Lesson</span></dt><dd><span lang="zh">在当前测量规模下，Gaussian 已接近可达精度。这些是训练集上的失败，不能归咎于泛化或算力。</span><span lang="en">At the current measurement count the Gaussian is close to the achievable accuracy. These are failures on the training data, so they cannot be blamed on generalisation or compute.</span></dd></dl>
   </section>
 
   <section class="result">
     <span class="tag plan"><span lang="zh">初步，进行中</span><span lang="en">preliminary</span></span>
-    <h3><span lang="zh">5. 计算成本：学习型初值真正的用武之地</span><span lang="en">5. Cost: where a learned start can actually help</span></h3>
-    <p><span lang="zh">在固定相机下，Gaussian 只需预先分解一个约 1 万 × 1 万的矩阵，之后每帧只要一次回代，几乎不花成本，学习方法无从节省。不能存储这个矩阵时，只能迭代求解：在一帧测试中，共轭梯度迭代约 384 步、再接三步 CGLS，才与精确 Gaussian 达到同等精度。真实 BOS 相机每台约百万像素，测量数在 10⁷ 量级，稠密矩阵需要约 800 TB 内存，只能迭代。</span><span lang="en">With fixed cameras the Gaussian only needs one factorisation of a ~10⁴ × 10⁴ matrix, then one back-substitution per frame, so there is nothing for a learned method to save. When the matrix cannot be stored, the solve must be iterative: on one test frame, about 384 conjugate-gradient steps plus three CGLS steps were needed to match the exact Gaussian. Real BOS cameras have ~10⁶ pixels each, giving ~10⁷ measurements; the dense matrix would need about 800 TB, so iteration is the only option.</span></p>
-    <dl><dt><span lang="zh">下一步</span><span lang="en">Next</span></dt><dd><span lang="zh">测量所需步数随测量数的变化，与经典加速方法比较，再在这个区间训练学习型初值。</span><span lang="en">Measure how the required steps grow with the number of measurements, compare with classical accelerations, then train the learned start in this regime.</span></dd></dl>
+    <h3><span lang="zh">5. 计算成本：经典加速已经很强，学习型初值要在它之上省</span><span lang="en">5. Cost: classical acceleration is strong; a learned start must save on top of it</span></h3>
+    <p><span lang="zh">固定相机时，Gaussian 只需预先分解一个约 1 万 × 1 万的矩阵，之后每帧一次回代，学习方法无从节省。真实 BOS 每台相机约百万像素，测量数在 10⁷ 量级，稠密矩阵需要约 800 TB，只能迭代求解。迭代步数随测量数增长（测量数翻 4 倍，步数约翻 2 倍），1% 噪声下要多约 3 倍，而 Nyström 预条件在那里的加速更大（6–16 倍）。</span><span lang="en">With fixed cameras the Gaussian needs one factorisation of a ~10⁴ × 10⁴ matrix and then one back-substitution per frame, so a learned method has nothing to save. Real BOS cameras have ~10⁶ pixels each, giving ~10⁷ measurements; the dense matrix would need about 800 TB, so the solve must be iterative. The iteration count grows with the measurement count (4× more measurements, about 2× more steps) and roughly triples at 1% noise, where the Nyström preconditioner helps even more (6–16×).</span></p>
+    <figure class="figure">
+  <svg viewBox="0 0 520 282" role="img" aria-label="Iterations needed to match the exact Gaussian">
+    <line x1="190" y1="10" x2="190" y2="276" stroke="var(--line)"/>
+    <g><title>Zero-start CG: median 384 steps (range 384–512)</title>
+      <text class="dg-sub" style="font-size:16px" x="180" y="30" text-anchor="end"><tspan lang="zh">零初值共轭梯度</tspan><tspan lang="en">Zero-start CG</tspan></text>
+      <rect x="190" y="16" width="282.0" height="22" rx="4" fill="var(--accent)" opacity="0.45"/>
+      <text class="dg-sub" style="font-size:16px" x="480.0" y="32">384</text></g>
+    <g><title>Previous frame: median 256 steps (range 192–384)</title>
+      <text class="dg-sub" style="font-size:16px" x="180" y="68" text-anchor="end"><tspan lang="zh">前一帧暖启动</tspan><tspan lang="en">Previous frame</tspan></text>
+      <rect x="190" y="54" width="188.0" height="22" rx="4" fill="var(--accent)" opacity="0.45"/>
+      <text class="dg-sub" style="font-size:16px" x="386.0" y="70">256</text></g>
+    <g><title>Nyström ℓ=25: median 256 steps (range 192–256)</title>
+      <text class="dg-sub" style="font-size:16px" x="180" y="106" text-anchor="end"><tspan lang="zh">Nyström ℓ=25</tspan><tspan lang="en">Nyström ℓ=25</tspan></text>
+      <rect x="190" y="92" width="188.0" height="22" rx="4" fill="var(--accent)" opacity="1"/>
+      <text class="dg-sub" style="font-size:16px" x="386.0" y="108">256</text></g>
+    <g><title>Nyström ℓ=100: median 128 steps (range 128–192)</title>
+      <text class="dg-sub" style="font-size:16px" x="180" y="144" text-anchor="end"><tspan lang="zh">Nyström ℓ=100</tspan><tspan lang="en">Nyström ℓ=100</tspan></text>
+      <rect x="190" y="130" width="94.0" height="22" rx="4" fill="var(--accent)" opacity="1"/>
+      <text class="dg-sub" style="font-size:16px" x="292.0" y="146">128</text></g>
+    <g><title>Nyström ℓ=400: median 64 steps (range 64–96)</title>
+      <text class="dg-sub" style="font-size:16px" x="180" y="182" text-anchor="end"><tspan lang="zh">Nyström ℓ=400</tspan><tspan lang="en">Nyström ℓ=400</tspan></text>
+      <rect x="190" y="168" width="47.0" height="22" rx="4" fill="var(--accent)" opacity="1"/>
+      <text class="dg-sub" style="font-size:16px" x="245.0" y="184">64</text></g>
+    <g><title>Nyström ℓ=400 + prev.: median 48 steps (range 32–64)</title>
+      <text class="dg-sub" style="font-size:16px" x="180" y="220" text-anchor="end"><tspan lang="zh">Nyström ℓ=400 + 前一帧</tspan><tspan lang="en">Nyström ℓ=400 + prev.</tspan></text>
+      <rect x="190" y="206" width="35.2" height="22" rx="4" fill="var(--accent)" opacity="1"/>
+      <text class="dg-sub" style="font-size:16px" x="233.2" y="222">48</text></g>
+    <g><title>Nyström ℓ=1600: median 24 steps (range 24)</title>
+      <text class="dg-sub" style="font-size:16px" x="180" y="258" text-anchor="end"><tspan lang="zh">Nyström ℓ=1600</tspan><tspan lang="en">Nyström ℓ=1600</tspan></text>
+      <rect x="190" y="244" width="17.6" height="22" rx="4" fill="var(--accent)" opacity="1"/>
+      <text class="dg-sub" style="font-size:16px" x="215.6" y="260">24</text></g>
+  </svg>
+      <figcaption><span lang="zh">达到精确 Gaussian 同等精度所需的迭代步数（中位数，越少越好）。原生网格、五相机、9 条轨迹。只用几何、不用训练数据的随机 Nyström 预条件，加上前一帧的结果做初值，把步数从约 384 降到约 48；秩取 1600 时只需 24 步，准备成本分摊到每帧不到 2 次算子调用。用训练轨迹构造初值子空间则完全无效。</span><span lang="en">Iterations needed to match the exact Gaussian (median; fewer is better). Native grid, five cameras, nine trajectories. A randomized Nyström preconditioner, built from the geometry alone with no training data, plus the previous frame as the starting point, cuts the steps from about 384 to about 48; at rank 1600 only 24 steps are needed, with set-up costing under two operator calls per frame. A starting subspace built from training trajectories did not help at all.</span></figcaption>
+    </figure>
+    <dl><dt><span lang="zh">意义</span><span lang="en">Why it matters</span></dt><dd><span lang="zh">“比从零开始快”不再是有意义的标准。学习型初值必须在 Nyström 加前一帧之上继续省步数，而且自身开销要低于省下的步数。</span><span lang="en">“Faster than a zero start” is no longer a meaningful bar. A learned start must save steps on top of Nyström plus the previous frame, and cost less than the steps it saves.</span></dd>
+    <dt><span lang="zh">局限</span><span lang="en">Limits</span></dt><dd><span lang="zh">停止点用真值判断，是诊断性测量，不是可部署的停止规则。</span><span lang="en">The stopping point is judged against ground truth, so this is a diagnostic, not a deployable stopping rule.</span></dd></dl>
   </section>
 
   <h2><span lang="zh">到目前为止学到的</span><span lang="en">What we have learned</span></h2>

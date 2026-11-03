@@ -28,11 +28,23 @@
 
   <!-- New entry: copy the <article class="entry"> block below, put it first, edit date/title/bullets. -->
   <article class="entry">
+    <time datetime="2026-11-04">2026-11-04</time>
+    <h3><span lang="zh">成本前沿：经典加速设定了真正的门槛</span><span lang="en">Cost frontier: classical acceleration sets the real bar</span></h3>
+    <ul>
+      <li><span lang="zh">随机 Nyström 预条件只用几何、不用训练数据，把达到精确 Gaussian 精度所需的步数从 384 降到 64（秩 400）和 24（秩 1600）；再用前一帧的结果做初值，秩 400 时降到 48。</span><span lang="en">A randomized Nyström preconditioner, built from the geometry alone, cut the steps needed to match the exact Gaussian from 384 to 64 (rank 400) and 24 (rank 1600); starting from the previous frame brought rank 400 down to 48.</span></li>
+      <li><span lang="zh">所需步数约随测量数的平方根增长；1% 噪声下多约 3 倍，而预条件在那里的加速更大（6–16 倍）。</span><span lang="en">The step count grows roughly with the square root of the measurement count; at 1% noise it triples, and the preconditioner helps even more there (6–16×).</span></li>
+      <li><span lang="zh">用其他轨迹的解构造初值子空间完全无效；用前几帧做线性或二次外推也没有比直接用前一帧更好。</span><span lang="en">A starting subspace built from other trajectories' solutions did not help at all, and linear or quadratic extrapolation from earlier frames did no better than the previous frame.</span></li>
+      <li><span lang="zh">余量测量：初值误差若能降到前一帧的 1/3，步数还能再降约 3 倍；降到 1/10，只需 2–8 步。这给学习型初值定下了具体的精度目标。</span><span lang="en">Headroom: a start three times closer than the previous frame would cut the steps about 3× further; ten times closer needs only 2–8 steps. This gives a learned start a concrete accuracy target.</span></li>
+    </ul>
+  </article>
+
+  <article class="entry">
     <time datetime="2026-11-03">2026-11-03</time>
     <h3><span lang="zh">方向转折：学习型初值的价值在大规模测量</span><span lang="en">Turning point: a learned start pays off at large measurement counts</span></h3>
     <ul>
       <li><span lang="zh">核对成本账：固定相机时，Gaussian 对照只需一次矩阵分解，之后每帧几乎不花成本。</span><span lang="en">Cost audit: with fixed cameras the Gaussian baseline needs one matrix factorisation, after which each frame is almost free.</span></li>
       <li><span lang="zh">迭代求解在一帧上要约 384 步才能与精确 Gaussian 同等精度；真实相机的测量规模下只能迭代。</span><span lang="en">The iterative solve needed about 384 steps on one frame to match the exact Gaussian; at real camera scale iteration is the only option.</span></li>
+      <li><span lang="zh">一个利用前一帧重建结果的时序模型完成训练，但沿 101 帧反向传播时梯度从约 80 增长到 1e234，最终误差是 Gaussian 的约 4.9 倍，还不如它自己的起点。判定为该训练方案失败；今后训练改为按预设规则提前止损。</span><span lang="en">A temporal model that reuses the previous frame finished training, but back-propagating through 101 frames was unstable (gradients grew from ~80 to 1e234) and its final error was ~4.9× the Gaussian, worse than its own starting point. The recipe is recorded as failed; future training stops early under pre-set futility rules.</span></li>
       <li><span lang="zh">下一步：测量所需步数随测量数的变化，并找到一套公开的真实 BOS 层析数据用于验证。</span><span lang="en">Next: measure how the required steps scale with the number of measurements, and use a public real BOS tomography dataset for validation.</span></li>
     </ul>
   </article>
