@@ -11,14 +11,14 @@
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="index.html">3D BOST Warm Starts<small>Gao Youyang · FYP</small></a>
-    <nav class="nav">
+    <nav class="nav" aria-label="主导航 / Main navigation">
       <a href="index.html"><span lang="zh">首页</span><span lang="en">Overview</span></a>
       <a href="method.html"><span lang="zh">问题与方法</span><span lang="en">Problem &amp; Method</span></a>
       <a href="results.html"><span lang="zh">结果</span><span lang="en">Results</span></a>
       <a href="log.html"><span lang="zh">进展日志</span><span lang="en">Progress Log</span></a>
       <a href="archive.html"><span lang="zh">资料归档</span><span lang="en">Archive</span></a>
     </nav>
-    <button class="lang-btn" type="button">中 / EN</button>
+    <button class="lang-btn" type="button" aria-label="切换语言 / Switch language">中 / EN</button>
   </div>
 </header>
 
@@ -59,7 +59,7 @@
   <section class="result">
     <span class="tag plan"><span lang="zh">初步，进行中</span><span lang="en">preliminary</span></span>
     <h3><span lang="zh">5. 计算成本：经典加速已经很强，学习型初值要在它之上省</span><span lang="en">5. Cost: classical acceleration is strong; a learned start must save on top of it</span></h3>
-    <p><span lang="zh">固定相机时，Gaussian 只需预先分解一个约 1 万 × 1 万的矩阵，之后每帧一次回代，学习方法无从节省。真实 BOS 每台相机约百万像素，测量数在 10⁷ 量级，稠密矩阵需要约 800 TB，只能迭代求解。迭代步数随测量数增长（测量数翻 4 倍，步数约翻 2 倍），1% 噪声下要多约 3 倍，而 Nyström 预条件在那里的加速更大（6–16 倍）。</span><span lang="en">With fixed cameras the Gaussian needs one factorisation of a ~10⁴ × 10⁴ matrix and then one back-substitution per frame, so a learned method has nothing to save. Real BOS cameras have ~10⁶ pixels each, giving ~10⁷ measurements; the dense matrix would need about 800 TB, so the solve must be iterative. The iteration count grows with the measurement count (4× more measurements, about 2× more steps) and roughly triples at 1% noise, where the Nyström preconditioner helps even more (6–16×).</span></p>
+    <p><span lang="zh">固定相机时，Gaussian 只需预先分解一个约 1 万 × 1 万的矩阵，之后每帧一次回代，学习方法无从节省。真实 BOS 每台相机约百万像素，测量数在 10⁷ 量级，稠密矩阵需要约 800 TB，只能迭代求解。迭代步数随测量数增长（测量数翻 4 倍，步数约翻 2 倍），1% 噪声下要多约 3 倍，而 Nyström 预条件在那里的加速也更大（秩 400 和 1600 分别快 6 倍和 16 倍）。</span><span lang="en">With fixed cameras the Gaussian needs one factorisation of a ~10⁴ × 10⁴ matrix and then one back-substitution per frame, so a learned method has nothing to save. Real BOS cameras have ~10⁶ pixels each, giving ~10⁷ measurements; the dense matrix would need about 800 TB, so the solve must be iterative. The iteration count grows with the measurement count (4× more measurements, about 2× more steps) and roughly triples at 1% noise, where the Nyström preconditioner also helps more (6× at rank 400 and 16× at rank 1600).</span></p>
     <figure class="figure">
   <svg viewBox="0 0 520 282" role="img" aria-label="Iterations needed to match the exact Gaussian">
     <line x1="190" y1="10" x2="190" y2="276" stroke="var(--line)"/>
@@ -94,12 +94,30 @@
   </svg>
       <figcaption><span lang="zh">达到精确 Gaussian 同等精度所需的迭代步数（中位数，越少越好）。原生网格、五相机、9 条轨迹。只用几何、不用训练数据的随机 Nyström 预条件，加上前一帧的结果做初值，把步数从约 384 降到约 48；秩取 1600 时只需 24 步，准备成本分摊到每帧不到 2 次算子调用。用训练轨迹构造初值子空间则完全无效。</span><span lang="en">Iterations needed to match the exact Gaussian (median; fewer is better). Native grid, five cameras, nine trajectories. A randomized Nyström preconditioner, built from the geometry alone with no training data, plus the previous frame as the starting point, cuts the steps from about 384 to about 48; at rank 1600 only 24 steps are needed, with set-up costing under two operator calls per frame. A starting subspace built from training trajectories did not help at all.</span></figcaption>
     </figure>
-    <dl><dt><span lang="zh">意义</span><span lang="en">Why it matters</span></dt><dd><span lang="zh">“比从零开始快”不再是有意义的标准。学习型初值必须在 Nyström 加前一帧之上继续省步数，而且自身开销要低于省下的步数。</span><span lang="en">“Faster than a zero start” is no longer a meaningful bar. A learned start must save steps on top of Nyström plus the previous frame, and cost less than the steps it saves.</span></dd>
+    <dl><dt><span lang="zh">意义</span><span lang="en">Why it matters</span></dt><dd><span lang="zh">“比从零开始快”不再是有意义的标准。学习型初值必须在 Nyström 加前一帧之上继续省步数，而且自身开销要低于省下的步数；第 6 条表明这个门槛还能更低。</span><span lang="en">“Faster than a zero start” is no longer a meaningful bar. A learned start must save steps on top of Nyström plus the previous frame, and cost less than the steps it saves; item 6 shows the bar can go lower still.</span></dd>
     <dt><span lang="zh">局限</span><span lang="en">Limits</span></dt><dd><span lang="zh">停止点用真值判断，是诊断性测量，不是可部署的停止规则。</span><span lang="en">The stopping point is judged against ground truth, so this is a diagnostic, not a deployable stopping rule.</span></dd></dl>
+  </section>
+
+  <section class="result">
+    <span class="tag pos"><span lang="zh">已核实</span><span lang="en">verified</span></span>
+    <h3><span lang="zh">6. 换一种求解形式，同样精度下步数约减半</span><span lang="en">6. A different formulation halves the steps at equal accuracy</span></h3>
+    <p><span lang="zh">同一个 Gaussian 后验均值也可以在白化原空间里求解：令 <span class="math">ρ = μ + Lw</span>，其中 <span class="math">C = LLᵀ</span> 直接由先验读出（与 C 的差约 1e-16）。两种形式每步的算子开销相同，还能从完全相同的初始场出发。不加预条件时，原空间从零开始只要 128–192 步（对偶形式 384 步），从前一帧开始要 96 步（对偶形式 192–384 步）。加 Nyström 预条件后，原空间秩 100 加前一帧只要 24–32 步；对偶形式秩 400 加前一帧要 32–48 步，准备成本也更高（400 次对 150 次算子调用）。</span><span lang="en">The same Gaussian posterior mean can also be solved in the whitened primal: <span class="math">ρ = μ + Lw</span>, with <span class="math">C = LLᵀ</span> read directly off the prior (matching C to about 1e-16). Both forms cost the same operator calls per step and can start from exactly the same field. Without preconditioning the primal needs 128–192 steps from zero (dual: 384) and 96 from the previous frame (dual: 192–384). With Nyström preconditioning, primal rank 100 plus the previous frame needs 24–32 steps, against 32–48 for dual rank 400 plus the previous frame, which also costs more to set up (400 against 150 operator calls).</span></p>
+    <p><span lang="zh">剩下的步数主要花在观测残差上：从前一帧出发，场和梯度大约 8–12 步就与 Gaussian 相当，观测残差要 24–32 步。一个用其他轨迹数据学出的线性修正把场误差降了约 30%，步数却没有减少；用前几帧外推或在其张成的子空间里取最优初值，也几乎不省步数。</span><span lang="en">The remaining steps go mostly into the observation residual: from the previous frame, the field and gradients match the Gaussian after about 8–12 steps, while the observation residual needs 24–32. A linear correction learned from other trajectories cut the field error by about 30% yet saved no steps, and extrapolating from earlier frames or taking the best start in their span saved almost none.</span></p>
+    <dl><dt><span lang="zh">范围</span><span lang="en">Scope</span></dt><dd><span lang="zh">原生网格、五相机；求解形式对比 9 帧，初值对比 12 帧。停止点用真值判断，是诊断性测量。</span><span lang="en">Native grid, five cameras; 9 frames for the formulation comparison and 12 for the starting points. Stopping is judged against ground truth, so these are diagnostics.</span></dd>
+    <dt><span lang="zh">意义</span><span lang="en">Why it matters</span></dt><dd><span lang="zh">经典门槛进一步降低。学习型初值只有降低观测残差才可能省步数；若能把前一帧的误差缩到 1/3，步数可降到 6–16。</span><span lang="en">The classical bar drops again. A learned start can save steps only by lowering the observation residual; shrinking the previous frame's error to a third would bring the count to 6–16.</span></dd></dl>
+  </section>
+
+  <section class="result">
+    <span class="tag mixed"><span lang="zh">有条件</span><span lang="en">conditional</span></span>
+    <h3><span lang="zh">7. 真实数据上，预条件的收益取决于先验</span><span lang="en">7. On real data, the preconditioner's gain depends on the prior</span></h3>
+    <p><span lang="zh">在宾州州立大学公开的真实 BOS 层析数据上（1063 万条射线，32³ 网格），以与收敛参考解相差 1% 为判据，不需要三维真值。不加平滑先验时，零初值共轭梯度和秩 32、64 的 Nyström 都要 64 次正反投影，算上准备成本，预条件没有净收益；原因是算子的谱衰减很慢，前 64 个特征值只相差 3.7 倍。加上高斯平滑先验（σ = 1.5 体素）后，前 64 个特征值相差 26 倍，Nyström 秩 64 在 48 次时达标，零初值要 64 次；步数相同时，误差小 4–10 倍。</span><span lang="en">On the public Penn State real BOS tomography data (10.6 million rays, 32³ grid), with a 1% match to a converged reference as the criterion, so no 3D truth is needed. Without a smoothing prior, zero-start conjugate gradients and rank-32 and rank-64 Nyström all need 64 forward–adjoint passes, so the preconditioner gives no net gain once set-up is counted: the spectrum decays slowly, only 3.7× over the first 64 eigenvalues. With a Gaussian smoothness prior (σ = 1.5 voxels) the decay steepens to 26×, rank-64 Nyström meets the criterion at 48 passes against 64 from zero, and at equal step count its error is 4–10× smaller.</span></p>
+    <dl><dt><span lang="zh">局限</span><span lang="en">Limits</span></dt><dd><span lang="zh">准备预条件要 64 次投影，多于单次求解省下的步数，只有同一几何下解 4 帧以上才划算；该数据只有一个稳态流场，无法检验多帧分摊。检查点较粗（32、48、64）。</span><span lang="en">Building the preconditioner costs 64 passes, more than one solve saves, so it pays off only over four or more frames with the same geometry; this dataset has a single steady flow, so amortisation over frames cannot be tested here. Checkpoints are coarse (32, 48, 64).</span></dd>
+    <dt><span lang="zh">意义</span><span lang="en">Why it matters</span></dt><dd><span lang="zh">合成数据上的加速依赖先验足够平滑，不能直接照搬到真实数据。</span><span lang="en">The speed-up seen on synthetic data relies on a smooth enough prior and does not carry over to real data as is.</span></dd></dl>
   </section>
 
   <h2><span lang="zh">到目前为止学到的</span><span lang="en">What we have learned</span></h2>
   <ul>
+    <li><span lang="zh">误差小，不等于省步数：一个用训练数据学出的修正把场误差降了约 30%，达到同等精度的步数却没有减少；决定步数的是观测残差。</span><span lang="en">A smaller error does not mean fewer steps: a correction learned from training data cut the field error by about 30% yet saved no steps; the observation residual sets the count.</span></li>
     <li><span lang="zh">算子调用少，不等于更快：一个经典初值少用了 72.7% 的调用，耗时却和对照几乎相同，内存还大得多。</span><span lang="en">Fewer operator calls do not mean faster: one classical start used 72.7% fewer calls but took the same time and far more memory.</span></li>
     <li><span lang="zh">训练损失下降，不等于重建更好：有几个小模型训练损失降了 13–27%，重建却没有改善。</span><span lang="en">Lower training loss does not mean better reconstructions: several small models cut their training loss by 13–27% with no gain in the final result.</span></li>
     <li><span lang="zh">先问“价值在哪个区间”，再设计方法：与其在强基线最强的地方硬拼，不如找到它代价最高的地方。</span><span lang="en">Ask where the value lies before designing a method: compete where the strong baseline is expensive, not where it is strongest.</span></li>

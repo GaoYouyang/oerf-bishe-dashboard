@@ -11,14 +11,14 @@
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="index.html">3D BOST Warm Starts<small>Gao Youyang · FYP</small></a>
-    <nav class="nav">
+    <nav class="nav" aria-label="主导航 / Main navigation">
       <a href="index.html"><span lang="zh">首页</span><span lang="en">Overview</span></a>
       <a href="method.html"><span lang="zh">问题与方法</span><span lang="en">Problem &amp; Method</span></a>
       <a href="results.html"><span lang="zh">结果</span><span lang="en">Results</span></a>
       <a href="log.html"><span lang="zh">进展日志</span><span lang="en">Progress Log</span></a>
       <a href="archive.html"><span lang="zh">资料归档</span><span lang="en">Archive</span></a>
     </nav>
-    <button class="lang-btn" type="button">中 / EN</button>
+    <button class="lang-btn" type="button" aria-label="切换语言 / Switch language">中 / EN</button>
   </div>
 </header>
 
@@ -39,7 +39,7 @@
 
   <h2><span lang="zh">3. 方法流程</span><span lang="en">3. Pipeline</span></h2>
   <ol>
-    <li><span lang="zh"><strong>学习型初值</strong>：网络只使用测得的位移和已知的相机几何，不看真值；对相机的排列顺序不敏感，可处理不同的相机数量。</span><span lang="en"><strong>Learned initial guess</strong>: the network uses only the measured displacements and the known camera geometry, never the truth; it is insensitive to camera ordering and handles different camera counts.</span></li>
+    <li><span lang="zh"><strong>学习型初值</strong>：只使用测得的位移和已知的相机几何，不看真值；设计上要能用于不同的相机数量。</span><span lang="en"><strong>Learned initial guess</strong>: uses only the measured displacements and the known camera geometry, never the truth, and is designed to work with different camera counts.</span></li>
     <li><span lang="zh"><strong>精确提升</strong>：把初值通过精确的伴随算子 Aᵀ 映射回三维场，保证它和测量物理一致。</span><span lang="en"><strong>Exact lift</strong>: map the guess back to the 3D field through the exact adjoint Aᵀ so that it is consistent with the measurement physics.</span></li>
     <li><span lang="zh"><strong>不改动的求解器</strong>：用标准 CGLS/PCGLS 继续迭代。学习只改变起点，不改变求解器。</span><span lang="en"><strong>Unchanged solver</strong>: continue with standard CGLS/PCGLS. Learning changes only the starting point, never the solver.</span></li>
   </ol>
@@ -51,6 +51,7 @@
     <tr><td>CGLS / PCGLS</td><td><span lang="zh">从零开始迭代固定步数，含对角预条件版本。</span><span lang="en">Fixed-step iterations from zero, including a diagonally preconditioned version.</span></td></tr>
     <tr><td><span lang="zh">Gaussian 条件均值</span><span lang="en">Gaussian posterior mean</span></td><td><span lang="zh">用训练场估计均值和协方差，求最小均方误差意义下的线性最优估计：<span class="math">ρ̂ = μ + C Aᵀ (A C Aᵀ + λI)⁻¹ (y − Aμ)</span>。可以先分解矩阵再逐帧求解，也可以用共轭梯度迭代求解。</span><span lang="en">Mean and covariance estimated from training fields only; the linear minimum-mean-square-error estimate <span class="math">ρ̂ = μ + C Aᵀ (A C Aᵀ + λI)⁻¹ (y − Aμ)</span>, computed either by factorising the matrix once or iteratively with conjugate gradients.</span></td></tr>
     <tr><td>Gaussian + CGLS3</td><td><span lang="zh">从 Gaussian 结果出发再做三步 CGLS。</span><span lang="en">Three CGLS steps started from the Gaussian estimate.</span></td></tr>
+  <tr><td><span lang="zh">Nyström PCG + 前一帧</span><span lang="en">Nyström PCG + previous frame</span></td><td><span lang="zh">迭代求 Gaussian 时的经典强对照：只用相机几何构造随机低秩预条件（Frangella 等，2023），从前一帧的解出发。在白化原空间中求解（<span class="math">ρ = μ + Lw</span>，<span class="math">C = LLᵀ</span>）时，步数约为对偶形式的一半。</span><span lang="en">The classical bar for the iterative Gaussian: a randomized low-rank preconditioner built from the camera geometry alone (Frangella et al., 2023), started from the previous frame's solution. Solving in the whitened primal (<span class="math">ρ = μ + Lw</span>, <span class="math">C = LLᵀ</span>) takes about half the steps of the dual form.</span></td></tr>
   </table></div>
 
   <h2><span lang="zh">5. 怎样才算“好”</span><span lang="en">5. What counts as “good”</span></h2>
@@ -60,10 +61,10 @@
   <h2><span lang="zh">6. 数据</span><span lang="en">6. Data</span></h2>
   <ul>
     <li><span lang="zh">公开的 PoolFire 池火 CFD 三维密度场：9 条完整训练轨迹，每条 101 帧，网格 200×80×80；其余轨迹封存，留作独立检验。</span><span lang="en">Public PoolFire CFD density fields: 9 complete training trajectories of 101 frames on a 200×80×80 grid; the remaining trajectories are kept sealed for independent tests.</span></li>
-    <li><span lang="zh">相机几何来自蔡老师课题组提供的真实九相机标定，可选 5/7/9 台相机。</span><span lang="en">Camera geometry comes from real nine-camera calibrations provided by Prof. Cai's group (5/7/9 cameras).</span></li>
-    <li><span lang="zh">计划使用宾州州立大学公开的真实 BOS 层析数据（Molnar 等，2025），检验真实测量规模下的计算成本。</span><span lang="en">Planned: the public real BOS tomography dataset from Penn State (Molnar et al., 2025), to test cost at real measurement scale.</span></li>
+    <li><span lang="zh">相机为位置已知的虚拟相机（5/7/9 台）。蔡老师课题组提供的真实九相机标定另用于标定误差检验。</span><span lang="en">The cameras are virtual cameras at known positions (5/7/9). Real nine-camera calibrations from Prof. Cai's group are used separately to test calibration errors.</span></li>
+    <li><span lang="zh">宾州州立大学公开的真实 BOS 层析数据（Molnar 等，2025）：在 1063 万条真实射线、32³ 网格上检验了求解成本（见<a href="results.html">结果</a>第 7 条）。</span><span lang="en">The public real BOS tomography dataset from Penn State (Molnar et al., 2025): solver cost tested on 10.6 million real rays on a 32³ grid (<a href="results.html">Results</a>, item 7).</span></li>
   </ul>
-  <p class="meta"><span lang="zh">局限：目前的位移由合成数据生成，采用直线小偏折模型，尚未在自有实验数据上验证。</span><span lang="en">Limitation: displacements are currently synthetic with a straight-ray small-deflection model; not yet validated on our own experimental data.</span></p>
+  <p class="meta"><span lang="zh">局限：精度评估用的位移由合成数据生成，采用直线小偏折模型；真实数据目前只用于成本测试，尚未在自有实验数据上验证。</span><span lang="en">Limitation: displacements for the accuracy evaluation are synthetic, with a straight-ray small-deflection model; real data have so far been used only for the cost test, and nothing has been validated on our own experiments.</span></p>
 </main>
 
 <footer class="site-footer"><div class="wrap"><span lang="zh">Gao Youyang · 厦门大学马来西亚分校物理系</span><span lang="en">Gao Youyang · XMUM Physics</span></div></footer>
