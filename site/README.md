@@ -10,6 +10,10 @@ filters and calendar script are unchanged. It keeps the older pages' `data-i18n-
 (`assets/site-language.js`). Both language keys (`oerf-lang`, `oerf-site-language`) are written on
 every switch, so the choice carries across old and new pages.
 
+The document reader `document_reader.html` has the same header via `site/reader.css` (after
+`site/style.css`) and loads `site/site.js`; its rendering script and `site_link_router.js` are
+unchanged. The router also loads the older translator, so the header button drives both.
+
 - Bilingual text: write `<span lang="zh">…</span><span lang="en">…</span>` side by side (or put
   `lang` on a block element). The button in the header switches language and remembers it.
 - New log entry: copy one `<article class="entry">` block in `log.html`, place it first, edit the

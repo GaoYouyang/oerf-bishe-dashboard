@@ -18,6 +18,8 @@
       root.setAttribute('data-lang', next);
       root.setAttribute('lang', next === 'zh' ? 'zh-CN' : 'en');
       try { localStorage.setItem('oerf-lang', next); localStorage.setItem('oerf-site-language', next); } catch (e) {}
+      // Pages that also load the older translator (e.g. the document reader) follow the same switch.
+      if (window.OERFLanguage) window.OERFLanguage.set(next);
     });
   });
 })();
