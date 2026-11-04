@@ -2,7 +2,8 @@
 (function () {
   var root = document.documentElement;
   var saved = null;
-  try { saved = localStorage.getItem('oerf-lang'); } catch (e) {}
+  // 'oerf-site-language' is the older pages' key; every switch writes both, so the latest choice wins.
+  try { saved = localStorage.getItem('oerf-site-language') || localStorage.getItem('oerf-lang'); } catch (e) {}
   root.setAttribute('data-lang', saved === 'en' ? 'en' : 'zh');
   root.setAttribute('lang', saved === 'en' ? 'en' : 'zh-CN');
 
@@ -16,7 +17,7 @@
       var next = root.getAttribute('data-lang') === 'zh' ? 'en' : 'zh';
       root.setAttribute('data-lang', next);
       root.setAttribute('lang', next === 'zh' ? 'zh-CN' : 'en');
-      try { localStorage.setItem('oerf-lang', next); } catch (e) {}
+      try { localStorage.setItem('oerf-lang', next); localStorage.setItem('oerf-site-language', next); } catch (e) {}
     });
   });
 })();
