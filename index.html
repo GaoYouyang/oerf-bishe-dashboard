@@ -31,7 +31,7 @@
       <span lang="zh">多台相机透过火焰拍摄背景图案的微小位移，可以反推出火焰的三维密度场。这个反问题很难，求解器要反复计算很多次。我研究的是：用学习得到的初值，能否在<strong>不降低精度</strong>的前提下，<strong>减少物理求解器的计算量</strong>。</span>
       <span lang="en">Several cameras record how a flame bends the view of a patterned background; from these small displacements we reconstruct the flame's 3D density. The inverse problem is hard and solvers iterate many times. This project asks whether a learned initial guess can <strong>cut the solver's cost</strong> <strong>without losing accuracy</strong>.</span>
     </p>
-    <p class="meta"><span lang="zh">校内导师：Dr Kelvin Ooi（XMUM）· 合作课题组：上海交通大学蔡伟伟教授课题组 · 更新于 2026-11-04</span><span lang="en">Internal supervisor: Dr Kelvin Ooi (XMUM) · In collaboration with Prof. Weiwei Cai's group (SJTU) · Updated 2026-11-04</span></p>
+    <p class="meta"><span lang="zh">校内导师：Dr Kelvin Ooi（XMUM）· 合作课题组：上海交通大学蔡伟伟教授课题组 · 更新于 2026-11-08</span><span lang="en">Internal supervisor: Dr Kelvin Ooi (XMUM) · In collaboration with Prof. Weiwei Cai's group (SJTU) · Updated 2026-11-08</span></p>
   </section>
 
   <figure class="figure">
@@ -68,7 +68,11 @@
 
   <h2><span lang="zh">目前的核心发现</span><span lang="en">Key findings so far</span></h2>
   <div class="note">
-    <strong><span lang="zh">最新（2026-11-04）</span><span lang="en">Latest (2026-11-04)</span></strong>
+    <strong><span lang="zh">最新（2026-11-06 至 11-08）</span><span lang="en">Latest (2026-11-06 to 11-08)</span></strong>
+    <p><span lang="zh">一条不看真值的停止规则在合作课题组的一套真实九视角多帧 BOS 记录上通过封存检验：3 组事先封存的数据各 2000/2000 帧与收敛参考解等价，算子调用约为参考解的 0.44。在一个新的公开火焰流动上（事先登记），在真实装置上调好阈值的三种残差类停止准则 0/354 帧等价，冻结规则 354/354。局限：只有一台真实装置；在已知装置上，用开发数据标定的固定容差比规则省约 36%。<a href="log.html">详见进展日志</a>。</span><span lang="en">A truth-free stopping rule passed a sealed test on a real nine-view, multi-frame BOS recording from the collaborating group: in each of 3 recordings sealed in advance, 2000/2000 frames matched a converged reference solve, at about 0.44 of the reference's operator calls. On a new public flame flow (pre-registered), three residual-type stopping criteria with thresholds tuned on the real rig matched 0/354 frames; the frozen rule matched 354/354. Limits: one real rig only; on a known rig a fixed tolerance calibrated on development data is about 36% cheaper than the rule. <a href="log.html">See the Progress Log</a>.</span></p>
+  </div>
+  <div class="note">
+    <strong><span lang="zh">2026-11-04</span><span lang="en">2026-11-04</span></strong>
     <p><span lang="zh">迭代求解的经典门槛已经很低：只用相机几何的随机 Nyström 预条件加前一帧暖启动，把达到 Gaussian 精度所需的步数从约 384 降到 48；把同一问题改在白化原空间里求解，再降到 24–32 步（无噪声合成数据、3 条轨迹的开发帧上的诊断性测量）。剩下的步数主要花在让观测残差达标上，所以学习型初值必须降低观测残差，单纯把场预测得更准并不省步数。<a href="results.html">详见结果页</a>。</span><span lang="en">The classical bar for the iterative solve is already low: a randomized Nyström preconditioner built from the camera geometry alone, started from the previous frame, cuts the steps needed to match the Gaussian from about 384 to 48, and solving the same problem in the whitened primal brings it to 24–32 (a diagnostic on development frames from 3 trajectories of noise-free synthetic data). The remaining steps are spent mostly on the observation residual, so a learned start has to lower that residual; predicting the field more accurately alone does not save steps. <a href="results.html">See Results</a>.</span></p>
   </div>
   <div class="grid two">
@@ -96,7 +100,7 @@
 
   <div class="note">
     <strong><span lang="zh">现在在做</span><span lang="en">Now working on</span></strong>
-    <p><span lang="zh">检验能直接降低观测残差的初值能否再省步数，先用经典方法，再考虑学习方法；同时在宾州州立大学公开的真实 BOS 层析数据上继续核对成本。</span><span lang="en">Testing whether a start that directly lowers the observation residual saves further steps, first with classical methods and then with learned ones, while continuing the cost checks on the public Penn State real BOS tomography data.</span></p>
+    <p><span lang="zh">关于停止规则的论文 1 导师审阅稿已完成，等待导师意见。论文 2 的方向仍在筛选：多数事先登记的方向是负结果，下一项候选检验是对重尾误差稳健的重建能否在真实数据的留出视角上胜过 Gaussian。</span><span lang="en">The supervisor-review draft of paper 1, on the stopping rule, is complete and awaits the supervisor's comments. The direction for paper 2 is still being screened: most pre-registered directions were negative, and the next candidate test is whether a reconstruction that is robust to heavy-tailed errors beats the Gaussian on held-out views of real data.</span></p>
   </div>
 
   <div class="grid">
@@ -108,8 +112,8 @@
 
 <footer class="site-footer">
   <div class="wrap">
-    <span lang="zh">Gao Youyang · 厦门大学马来西亚分校物理系。精度评估用公开 CFD 合成的数据；成本测试另用了公开的真实 BOS 数据。尚未在自有实验数据上验证。旧版页面见 <a href="archive.html">资料归档</a>。</span>
-    <span lang="en">Gao Youyang · XMUM Physics. Accuracy is evaluated on synthetic data from public CFD; the cost was also tested on public real BOS data. Not yet validated on our own experimental data. Older pages are in the <a href="archive.html">archive</a>.</span>
+    <span lang="zh">Gao Youyang · 厦门大学马来西亚分校物理系。精度评估用公开 CFD 合成的数据；成本测试另用了公开的真实 BOS 数据；停止规则另在合作课题组的一套真实多帧 BOS 记录上做了封存检验（未公开数据，只报告汇总指标）。尚未在自有实验数据上验证。旧版页面见 <a href="archive.html">资料归档</a>。</span>
+    <span lang="en">Gao Youyang · XMUM Physics. Accuracy is evaluated on synthetic data from public CFD; the cost was also tested on public real BOS data, and the stopping rule had a sealed test on a real multi-frame BOS recording from the collaborating group (unpublished; summary metrics only). Not yet validated on our own experimental data. Older pages are in the <a href="archive.html">archive</a>.</span>
   </div>
 </footer>
 </body>

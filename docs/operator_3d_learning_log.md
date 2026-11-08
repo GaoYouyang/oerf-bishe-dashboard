@@ -1,5 +1,41 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-11-08 | 论文 2 方向筛选：多数方向为负，不确定性校准有稳健发现 / Paper 2 Screening: Mostly Negative, Robust Calibration Findings
+
+按事先写好的判据，跨帧 Krylov 子空间回收（未达到预定节省目标且数值不稳定）、扩散模型先验采样（即使在训练轨迹上，场误差也约为匹配 Gaussian 的3.2倍）、贝叶斯最优视角设计（能正确排序视角组合，但设计布局不优于均匀环形布局）和考虑标定误差的重建（实际误差量级下误差参数不可辨识，未胜过对照）均为负结果。这些只关闭各自的具体方案，不代表整类方法不可行。
+
+Judged by criteria written in advance, cross-frame Krylov subspace recycling (missed its preset saving target and was numerically unstable), diffusion-prior posterior sampling (field error about 3.2 times the matched Gaussian, even on a training trajectory), Bayesian optimal view design (ranks view subsets correctly, but designed layouts are no better than an evenly spread ring) and calibration-aware reconstruction (error parameters not identifiable at realistic sizes; no gain over controls) are all negative. These close specific recipes, not whole method families.
+
+不确定性校准在同一真实装置的六段记录上以留出视角检验：证据最大化选超参数系统性过度自信，名义90%区间的实际覆盖率在六段上都只有0.545–0.566。事先登记的重尾异方差误差模型在4段新记录中只有1段通过全部门槛，未获确认；但其90%覆盖率在4段中都落在0.85–0.95，负对数预测密度最低。局限：六段记录来自同一装置且相邻帧高度相关；覆盖率在观测（视角）空间检验，不等于三维场的覆盖率。论文2方向尚未确定。
+
+Uncertainty calibration was checked on held-out views across six recordings from the same real rig. Evidence maximisation is systematically over-confident: nominal 90% intervals cover only 0.545–0.566 in all six. A pre-registered heavy-tailed, heteroscedastic error model passed every gate in only 1 of 4 new recordings and is not confirmed, yet its 90% coverage stayed within 0.85–0.95 in all 4 with the lowest negative log predictive density. Limits: the recordings share one rig and neighbouring frames are highly correlated; coverage is tested in observation (view) space, not for the 3D field. The direction for paper 2 is not settled.
+
+## 2026-11-08 | 论文 1 导师审阅稿完成 / Paper 1 Supervisor-Review Draft Completed
+
+关于停止规则的论文1完成导师审阅稿v3.3（中英文），纳入下述跨流动检验。独立审阅复现了稿中198个数字和全部因果链表格，未发现推翻主要结论的问题，仅一处舍入需更正，同时指出投稿前仍需进一步修改；意见已逐条回复。这是交导师讨论的稿件，不是投稿版本，暂不公开。
+
+Paper 1, on the stopping rule, reached supervisor-review draft v3.3 (English and Chinese), including the cross-flow tests below. An independent review reproduced 198 numbers and every causal-chain table cell, found nothing that overturns the main results and only one rounding to correct, and says further revision is needed before journal submission; each point has been answered. This is a draft for discussion with the supervisor, not a submitted manuscript, and it is not public.
+
+## 2026-11-08 | 跨流动检验：调好的残差类停止准则不能迁移 / Cross-Flow Test: Tuned Residual-Type Stopping Criteria Do Not Transfer
+
+新流动族为公开的层流伴流火焰CFD（扰动幅度A0.3与A0.5，三种激励，无噪声与1%噪声），沿用合成五相机几何，以精确后验为参考。每种停止准则各走一条因果链，每帧从自己上一帧停下的结果出发。三种常用残差类准则（相对残差、相对变化、Arioli型能量估计）的阈值在真实装置开发记录上调到零漏判；冻结规则不做调整。“等价”指四项指标都不超过精确后验的1.01倍。A0.3（已开封数据，事后分析）：规则354/354，三种残差类准则均为0/354，数据残差停滞354/354但迭代数为规则的1.32倍。A0.5（数据下载前登记判读方案，前瞻检验）：规则354/354（最差比值1.0014，门槛1.01），三种残差类准则仍为0/354，残差停滞354/354、迭代数为规则的1.32倍；可靠准则中规则最省。
+
+The new flow family is public CFD of a laminar coflow flame (forcing amplitudes A0.3 and A0.5, three forcing types, noise-free and 1% noise) on the reused synthetic five-camera geometry, with the exact posterior as reference. Each stopping criterion runs its own causal chain, starting every frame from where it stopped on the previous one. Three common residual-type criteria (relative residual, relative change, an Arioli-type energy estimate) had thresholds tuned to zero misses on development recordings from the real rig; the frozen rule was not adjusted. A frame matches when all four metrics are within 1.01 times the exact posterior. A0.3 (opened data, post hoc): rule 354/354, all three residual-type criteria 0/354, misfit stagnation 354/354 at 1.32 times the rule's iterations. A0.5 (reading fixed before the data were downloaded, prospective): rule 354/354 (worst ratio 1.0014 against 1.01), residual-type criteria again 0/354, misfit stagnation 354/354 at 1.32 times; among reliable criteria the rule is cheapest.
+
+局限：合成数据、沿用旧五相机几何；A0.5上规则迭代数仍为事后用真值找到的最早停止点的约1.6–2.5倍。在同一真实装置上，调好的残差类准则在事先登记的另一段记录中只漏判1帧（一个异常亮的采集帧），并比规则少约36%的调用。准确表述是“在所选阈值下唯一零漏判的准则”，而非“其他准则都失败”。
+
+Limits: synthetic data on the reused five-camera geometry; on A0.5 the rule still uses about 1.6–2.5 times the iterations of the earliest stop found afterwards with ground truth. On the same real rig, the tuned residual-type criteria missed only one frame (an unusually bright acquisition frame) in another pre-registered recording and used about 36% fewer operator calls than the rule. The accurate claim is "the only criterion with zero misses at the chosen thresholds", not "every other criterion fails".
+
+## 2026-11-06 | 不看真值的停止规则通过真实数据封存检验 / Truth-Free Stopping Rule Passes a Sealed Real-Data Test
+
+11-04的步数测量以真值判断停止点，实际不可用。新的停止规则不看真值：只有当估计的剩余数据误差相对当前残差足够小、且外推的场更新量相对后验场标准差σ_f（只由先验和算子算出）足够小时才停；规则常数在合成数据开发阶段冻结，此后未改。数据为合作课题组的一套真实九视角多帧BOS记录（未公开，只报告汇总指标），一个视角始终留出不参与求解。“与参考等价”指8个求解视角和留出视角的残差都不超过收敛到1e-9的参考解的1.01倍，且场与参考解的距离不超过0.142σ_f。开发组2000/2000帧等价后，先登记并提交检验方案，再打开另外3组记录：3组封存数据各2000/2000帧等价，含准备成本的算子调用为参考解的0.439–0.443，中位成本为事后真值最早停止点的1.83倍。
+
+The 11-04 step counts stopped on ground truth, which is unavailable in practice. The new rule needs no truth: it stops only when the estimated remaining data error is small relative to the current misfit and the extrapolated field update is small relative to the posterior field standard deviation sigma_f, computed from the prior and operator alone; its constants were frozen during synthetic development and not changed. The data are a real nine-view, multi-frame BOS recording from the collaborating group (unpublished; summary metrics only), with one view always held out of the solve. A frame is reference-equivalent when the misfit on the 8 solved views and on the held-out view are within 1.01 times a reference solve converged to 1e-9 and the field lies within 0.142 sigma_f of it. After 2000/2000 development frames matched, the test plan was registered and committed before three further recordings were opened: each sealed recording matched 2000/2000 frames, at 0.439–0.443 of the reference's operator calls including set-up, with median cost 1.83 times the earliest truth-found stop.
+
+局限：同一台装置、同一个先验。事先登记的对照显示，开发组上用参考解标定的固定容差（3e-4）在封存组每组抽查的400帧上同样全部等价，并比规则少约36%调用；规则的优势是无需逐装置标定，而不是在已知装置上最省。正则化比最优值弱4个数量级的压力设置下规则未通过（参考解本身已过拟合）。“等价”相对参考解而言，真实数据没有真值；成本按算子调用计。
+
+Limits: one rig and one prior. A pre-registered control shows that a fixed tolerance (3e-4) calibrated against reference solves on the development recording also matched all 400 frames checked in each sealed recording, with about 36% fewer calls than the rule; the rule's advantage is needing no per-rig calibration, not being cheapest on a known rig. With regularisation four orders of magnitude weaker than optimal the rule failed (the reference itself over-fits there). Equivalence is to the reference solve, since real data have no ground truth; cost is counted in operator calls.
+
 ## 2026-10-29 | 完整耦合的低存储经典对照 / Lower-Storage Full-Coupling Classical Control
 
 在9条已开封公开训练轨迹、909个原始200×80×80源场、已知无噪声五相机代理上，完整保留全局Cholesky因子，只将全部下三角系数以单精度打包保存，并以双精度分块求解。909/909个样本的场、全梯度、内部梯度和观测误差均满足结果前冻结的参考匹配要求；9/9条完整轨迹守住绝对尾部门。四指标相对参考的最大比值约1.00000106，不能将数值接近表述成逐字节相同。
